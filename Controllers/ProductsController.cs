@@ -38,7 +38,7 @@ namespace BangazonAPI.Controllers
 
         }
         // GET api/values/5
-        [HttpGet("{id}", Name = "GetOrder")]
+        [HttpGet("{id}", Name = "GetProduct")]
         public IActionResult Get([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -48,14 +48,14 @@ namespace BangazonAPI.Controllers
 
             try
             {
-                Order order = context.Order.Single(m => m.OrderId == id);
+                Product product = context.Product.Single(m => m.ProductId == id);
 
-                if (order == null)
+                if (product == null)
                 {
                     return NotFound();
                 }
                 
-                return Ok(order);
+                return Ok(product);
             }
             catch (System.InvalidOperationException ex)
             {
@@ -67,21 +67,21 @@ namespace BangazonAPI.Controllers
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody] Order order)
+        public IActionResult Post([FromBody] Product product)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            context.Order.Add(order);
+            context.Product.Add(product);
             try
             {
                 context.SaveChanges();
             }
             catch (DbUpdateException)
             {
-                if (OrderExists(order.OrderId))
+                if (ProductExists(product.ProductId))
                 {
                     return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -91,7 +91,7 @@ namespace BangazonAPI.Controllers
                 }
             }
 
-            return CreatedAtRoute("GetOrder", new { id = order.OrderId }, order);
+            return CreatedAtRoute("GetProduct", new { id = product.ProductId }, product);
         }
 
         // PUT api/values/5
@@ -105,9 +105,9 @@ namespace BangazonAPI.Controllers
         public void Delete(int id)
         {
         }
-         private bool OrderExists(int id)
+         private bool ProductExists(int id)
         {
-            return context.Order.Count(e => e.OrderId == id) > 0;
+            return context.Product.Count(e => e.ProductId == id) > 0;
         }
     }
 }
