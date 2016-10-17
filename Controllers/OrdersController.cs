@@ -96,15 +96,19 @@ namespace BangazonAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Put([FromRoute]int id, [FromBody]Order order)
         {
+            if (id != order.OrderId)
+            {
+                return BadRequest(ModelState);
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            order.OrderId = id;
+            
             context.Order.Update(order);
             try
             {
-               context.SaveChanges();
+                context.SaveChanges();
 
                 if (order == null)
                 {
@@ -123,23 +127,18 @@ namespace BangazonAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute]int id, [FromBody] Order order)
         {
-             if (!ModelState.IsValid)
+            if (order == null)
             {
-                return BadRequest(ModelState);
+                return NotFound();
             }
-            order.OrderId = id;
-            context.Order.Remove(order);
+
             try
             {
-               context.SaveChanges();
-
-                if (order == null)
-                {
-                    return NotFound();
-                }
-                
+                context.Order.Remove(order);
+                context.SaveChanges();
                 return Ok(order);
             }
+            
             catch (System.InvalidOperationException ex)
             {
                 return NotFound();
