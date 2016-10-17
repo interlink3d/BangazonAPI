@@ -96,14 +96,56 @@ namespace BangazonAPI.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public IActionResult Put([FromRoute] int id, [FromBody]Product product)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            product.ProductId = id;
+            context.Product.Update(product);
+            try
+            {
+               context.SaveChanges();
+
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                
+                return Ok(product);
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return NotFound();
+            }
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete([FromRoute]int id, [FromBody] Product product)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            product.ProductId = id;
+            context.Product.Remove(product);
+            try
+            {
+               context.SaveChanges();
+
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                
+                return Ok(product);
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return NotFound();
+            }
         }
          private bool ProductExists(int id)
         {

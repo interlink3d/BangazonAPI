@@ -35,8 +35,8 @@ namespace BangazonAPI.Controllers
             }
 
             return Ok(orders);   // creates a 200 response that is already built in and returns JSON file of "orders" 
-
         }
+
         // GET api/values/5
         [HttpGet("{id}", Name = "GetOrder")]
         public IActionResult Get([FromRoute] int id)
@@ -61,8 +61,6 @@ namespace BangazonAPI.Controllers
             {
                 return NotFound();
             }
-
-
         }
 
         // POST api/values
@@ -96,14 +94,56 @@ namespace BangazonAPI.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public IActionResult Put([FromRoute]int id, [FromBody]Order order)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            order.OrderId = id;
+            context.Order.Update(order);
+            try
+            {
+               context.SaveChanges();
+
+                if (order == null)
+                {
+                    return NotFound();
+                }
+                
+                return Ok(order);
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return NotFound();
+            }
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete([FromRoute]int id, [FromBody] Order order)
         {
+             if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            order.OrderId = id;
+            context.Order.Remove(order);
+            try
+            {
+               context.SaveChanges();
+
+                if (order == null)
+                {
+                    return NotFound();
+                }
+                
+                return Ok(order);
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return NotFound();
+            }
         }
          private bool OrderExists(int id)
         {

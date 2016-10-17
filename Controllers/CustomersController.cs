@@ -27,7 +27,7 @@ namespace BangazonAPI.Controllers
         // IActionResult is a default type 
         public IActionResult Get()   
         {
-            IQueryable<object> customers = from customer in context.Customer select customer;
+            IQueryable<object> customers = from customer in context.Customer select customer; // (could be customer;firstname)
 
             if (customers == null)
             {
@@ -37,7 +37,7 @@ namespace BangazonAPI.Controllers
             return Ok(customers);   // creates a 200 response that is already built in and returns JSON file of "customers" 
 
         }
-        // GET api/values/5
+        // GET api/customers/5
         [HttpGet("{id}", Name = "GetCustomer")]
         public IActionResult Get([FromRoute] int id)
         {
@@ -65,7 +65,7 @@ namespace BangazonAPI.Controllers
 
         }
 
-        // POST api/values
+        // POST api/customers
         [HttpPost]
         public IActionResult Post([FromBody] Customer customer)
         {
@@ -96,14 +96,56 @@ namespace BangazonAPI.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public IActionResult Put([FromRoute] int id, [FromBody]Customer customer)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            customer.CustomerId = id;
+            context.Customer.Update(customer);
+            try
+            {
+               context.SaveChanges();
+
+                if (customer == null)
+                {
+                    return NotFound();
+                }
+                
+                return Ok(customer);
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return NotFound();
+            }
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete([FromRoute]int id, [FromBody] Customer customer)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            customer.CustomerId = id;
+            context.Customer.Remove(customer);
+            try
+            {
+               context.SaveChanges();
+
+                if (customer == null)
+                {
+                    return NotFound();
+                }
+                
+                return Ok(customer);
+            }
+            catch (System.InvalidOperationException ex)
+            {
+                return NotFound();
+            }
         }
          private bool CustomerExists(int id)
         {

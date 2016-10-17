@@ -34,7 +34,6 @@ namespace Bangazon.Data
                 .Property(b => b.DateCreated)
                 .HasDefaultValueSql("strftime('%Y-%m-%d %H:%M:%S')");
 
-            // need to add product the same as above    
         }
     }
 
