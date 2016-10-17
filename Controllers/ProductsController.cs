@@ -127,8 +127,10 @@ namespace BangazonAPI.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute]int id, [FromBody] Product product)
+        public IActionResult Delete([FromRoute]int id)
         {
+            Product product = context.Product.Single(m => m.ProductId == id);
+            
             if (product == null)
             {
                 return NotFound();
@@ -146,7 +148,7 @@ namespace BangazonAPI.Controllers
                 return NotFound();
             }
         }
-        
+
          private bool ProductExists(int id)
         {
             return context.Product.Count(e => e.ProductId == id) > 0;

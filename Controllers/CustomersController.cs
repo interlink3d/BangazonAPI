@@ -127,8 +127,10 @@ namespace BangazonAPI.Controllers
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute]int id, [FromBody] Customer customer)
+        public IActionResult Delete([FromRoute]int id)
         {
+            Customer customer = context.Customer.Single(m => m.CustomerId == id);
+
             if (customer == null)
             {
                 return NotFound();
